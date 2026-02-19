@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Atm card‌</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      background: linear-gradient(145deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Courier New', monospace;
+      padding: 1rem;
+      margin: 0;
+    }
+
+    .scene {
+      width: 100%;
+      max-width: 480px;
+      margin: 20px auto;
+      perspective: 1500px;
+      -webkit-perspective: 1500px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      touch-action: pan-y pinch-zoom;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1.586 / 1;
+      position: relative;
+      transform-style: preserve-3d;
+      cursor: grab;
+      touch-action: none;
+      transform-origin: 50% 50%;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      transition: none; /* بدون transition خودکار */
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 28px;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 40px -15px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+    }
+
+    .card-front {
+      background: linear-gradient(145deg, #1f1f1f, #0b0b0b);
+      border: 1px solid rgba(100, 100, 100, 0.3);
+      transform: rotateY(0deg);
+      padding: 1.5rem 1.2rem;
+      justify-content: space-between;
+    }
+
+    .card-front::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at 30% 20%, rgba(220, 220, 220, 0.1) 0%, transparent 70%);
+      border-radius: 28px;
+      pointer-events: none;
+    }
+
+    .card-back {
+      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+      transform: rotateY(180deg);
+      border: 1px solid #333;
+    }
+
+    .magnetic-strip {
+      width: 100%;
+      height: 25%;
+      background: #111;
+      margin-top: 15px;
+      border-top: 2px solid #333;
+      border-bottom: 2px solid #333;
+      box-shadow: inset 0 0 10px #000;
+    }
+
+    .card-header {
+      position: relative;
+      width: 100%;
+      height: 50px;
+      flex-shrink: 0;
+    }
+
+    .circles {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 80px;
+      height: 50px;
+    }
+    .circle1, .circle2 {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      position: absolute;
+      background: linear-gradient(135deg, #239f40, #da121a);
+      box-shadow: 0 0 8px rgba(200,200,200,0.3);
+      border: 1px solid #aaa;
+    }
+    .circle1 {
+      left: 0;
+      z-index: 2;
+    }
+    .circle2 {
+      left: 20px;
+      z-index: 1;
+      opacity: 0.9;
+    }
+
+    .chip-section {
+      display: flex;
+      align-items: center;
+      margin: 5px 0 10px;
+      flex-shrink: 0;
+      justify-content: flex-start;
+    }
+    .chip {
+      width: 48px;
+      height: 36px;
+      background: linear-gradient(145deg, #d4af37, #b8860b);
+      border-radius: 8px;
+      position: relative;
+      box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6);
+      border: 1px solid #f1c40f;
+    }
+    .chip::before {
+      content: "";
+      position: absolute;
+      width: 80%;
+      height: 2px;
+      background: #f1e6b0;
+      left: 10%;
+      top: 30%;
+      box-shadow: 0 8px 0 #f1e6b0;
+    }
+    .chip::after {
+      content: "";
+      position: absolute;
+      width: 2px;
+      height: 70%;
+      background: #f1e6b0;
+      left: 30%;
+      top: 15%;
+      box-shadow: 8px 0 0 #f1e6b0;
+    }
+
+    .number-wrapper {
+      width: 100%;
+      margin: 5px 0 5px;
+      display: flex;
+      justify-content: flex-start;
+      overflow: visible;
+      flex-shrink: 0;
+    }
+
+    .card-number {
+      font-family: 'Courier New', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #ffffff;
+      text-shadow: 0 2px 4px black;
+      letter-spacing: 4px;
+      white-space: nowrap;
+      transform-origin: right center;
+      background: rgba(0,0,0,0.5);
+      padding: 0.2rem 0.8rem;
+      border-radius: 16px;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: background 0.2s;
+      text-decoration: none;
+      outline: 0;
+      -webkit-tap-highlight-color: transparent;
+      line-height: 1.3;
+    }
+    .card-number:active {
+      background: #3a3a3a !important;
+      color: #ffffff !important;
+    }
+
+    .card-holder {
+      font-family: 'Segoe UI', 'Courier New', monospace;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      color: #ccc;
+      text-transform: uppercase;
+      padding: 0 5px;
+      margin-bottom: 5px;
+      text-align: left;
+      flex-shrink: 0;
+    }
+
+    .instruction {
+      text-align: center;
+      margin-top: 30px;
+      background: rgba(20,20,30,0.7);
+      backdrop-filter: blur(8px);
+      padding: 12px 24px;
+      border-radius: 60px;
+      border: 1px solid rgba(150,150,150,0.3);
+      color: #ccc;
+      width: fit-content;
+      max-width: 90%;
+      font-size: 0.95rem;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2e7d32;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 1000;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+
+    .footer-note {
+      color: #5a5a6a;
+      margin-top: 20px;
+      font-size: 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="card" id="bankCard">
+      <div class="card-front">
+        <div class="card-header">
+          <div class="circles">
+            <div class="circle1"></div>
+            <div class="circle2"></div>
+          </div>
+        </div>
+
+        <div class="chip-section">
+          <div class="chip"></div>
+        </div>
+
+        <div class="number-wrapper" id="numberWrapper">
+          <div class="card-number" id="cardNumber" dir="ltr">
+            1234 5678 9012 3456
+          </div>
+        </div>
+
+        <div class="card-holder">M. SENSI</div>
+      </div>
+
+      <div class="card-back">
+        <div class="magnetic-strip"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="instruction">
+    👆 سنسی گروپ | روی شماره کلیک کنید تا کپی شود
+  </div>
+
+  <div class="toast" id="toast">شماره کارت کپی شد</div>
+
+  <div class="footer-note">
+    SENSI GROUP
+  </div>
+
+  <script>
+    (function() {
+      const card = document.getElementById('bankCard');
+      const cardNumber = document.getElementById('cardNumber');
+      const toast = document.getElementById('toast');
+      const numberWrapper = document.getElementById('numberWrapper');
+
+      // تنظیم scale شماره برای جا شدن ۱۶ رقم
+      function adjustNumberScale() {
+        if (!cardNumber || !numberWrapper) return;
+        cardNumber.style.transform = 'none';
+        const textWidth = cardNumber.scrollWidth;
+        const containerWidth = numberWrapper.clientWidth;
+        
+        if (textWidth > containerWidth) {
+          const scale = containerWidth / textWidth;
+          cardNumber.style.transform = `scale(${scale})`;
+          cardNumber.style.transformOrigin = 'right center';
+        } else {
+          cardNumber.style.transform = 'scale(1)';
+        }
+      }
+
+      window.addEventListener('load', adjustNumberScale);
+      window.addEventListener('resize', adjustNumberScale);
+      setTimeout(adjustNumberScale, 100);
+
+      // ========== چرخش با Pointer Events (روش incremental) ==========
+      let isDragging = false;
+      let lastX = 0;
+      let currentRotateY = 0;
+      const SENSITIVITY = 0.8;
+
+      card.addEventListener('pointerdown', (e) => {
+        // فقط دکمه اصلی موس یا لمس
+        if (e.button !== 0 && e.pointerType !== 'touch') return;
+        
+        isDragging = true;
+        lastX = e.clientX;
+        
+        // هیچ transition نباید باشد
+        card.style.transition = 'none';
+        
+        // دریافت انحصاری pointer
+        card.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+
+      card.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        
+        const deltaX = e.clientX - lastX;
+        if (Math.abs(deltaX) > 0) {
+          currentRotateY += deltaX * SENSITIVITY;
+          card.style.transform = `rotateY(${currentRotateY}deg)`;
+          lastX = e.clientX;
+        }
+        
+        e.preventDefault();
+      });
+
+      card.addEventListener('pointerup', (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        card.releasePointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+
+      card.addEventListener('pointercancel', (e) => {
+        isDragging = false;
+        card.releasePointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+
+      card.addEventListener('contextmenu', (e) => e.preventDefault());
+
+      // ========== کپی شماره ==========
+      function showToast() {
+        toast.classList.add('show');
+        setTimeout(() => {
+          toast.classList.remove('show');
+        }, 1500);
+      }
+
+      async function copyToClipboard(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+          showToast();
+        } catch (err) {
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          showToast();
+        }
+      }
+
+      function handleCopy(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        const numberText = cardNumber.innerText.trim();
+        copyToClipboard(numberText);
+      }
+
+      cardNumber.addEventListener('click', handleCopy);
+      cardNumber.addEventListener('touchstart', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        handleCopy(e);
+      }, { passive: false });
+
+      const resizeObserver = new ResizeObserver(adjustNumberScale);
+      resizeObserver.observe(numberWrapper);
+    })();
+  </script>
+</body>
+</html>

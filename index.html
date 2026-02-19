@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Atm card‌</title>
+  <title>Atm Card</title>
   <style>
     * {
       margin: 0;
@@ -45,9 +45,8 @@
       cursor: grab;
       touch-action: none;
       transform-origin: 50% 50%;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      transition: none; /* بدون transition خودکار */
+      will-change: transform;
+      transition: transform 0.3s ease;
     }
 
     .card:active {
@@ -67,30 +66,29 @@
       flex-direction: column;
       box-shadow: 0 30px 40px -15px rgba(0, 0, 0, 0.8);
       overflow: hidden;
+      pointer-events: none;
     }
 
     .card-front {
-      background: linear-gradient(145deg, #1f1f1f, #0b0b0b);
+      --card-bg-start: #1f1f1f;
+      --card-bg-end: #0b0b0b;
+      --circle1-color: #239f40;
+      --circle2-color: #da121a;
+      --chip-color: #d4af37;
+      
+      background: linear-gradient(145deg, var(--card-bg-start), var(--card-bg-end));
       border: 1px solid rgba(100, 100, 100, 0.3);
       transform: rotateY(0deg);
       padding: 1.5rem 1.2rem;
       justify-content: space-between;
-    }
-
-    .card-front::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(circle at 30% 20%, rgba(220, 220, 220, 0.1) 0%, transparent 70%);
-      border-radius: 28px;
-      pointer-events: none;
+      isolation: isolate;
     }
 
     .card-back {
-      background: linear-gradient(145deg, #1a1a1a, #0a0a0a);
+      --card-back-start: #1a1a1a;
+      --card-back-end: #0a0a0a;
+      
+      background: linear-gradient(145deg, var(--card-back-start), var(--card-back-end));
       transform: rotateY(180deg);
       border: 1px solid #333;
     }
@@ -105,11 +103,28 @@
       box-shadow: inset 0 0 10px #000;
     }
 
+    .glare {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 28px;
+      background: radial-gradient(circle at 30% 50%, rgba(255, 255, 255, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0.5;
+      mix-blend-mode: overlay;
+      transition: opacity 0.1s ease, background 0.1s ease;
+      will-change: opacity, background;
+      z-index: 2;
+    }
+
     .card-header {
       position: relative;
       width: 100%;
       height: 50px;
       flex-shrink: 0;
+      z-index: 4;
     }
 
     .circles {
@@ -118,13 +133,14 @@
       top: 0;
       width: 80px;
       height: 50px;
+      pointer-events: none;
     }
     .circle1, .circle2 {
       width: 45px;
       height: 45px;
       border-radius: 50%;
       position: absolute;
-      background: linear-gradient(135deg, #239f40, #da121a);
+      background: linear-gradient(135deg, var(--circle1-color), var(--circle2-color));
       box-shadow: 0 0 8px rgba(200,200,200,0.3);
       border: 1px solid #aaa;
     }
@@ -144,35 +160,37 @@
       margin: 5px 0 10px;
       flex-shrink: 0;
       justify-content: flex-start;
+      pointer-events: none;
+      z-index: 4;
     }
     .chip {
       width: 48px;
       height: 36px;
-      background: linear-gradient(145deg, #d4af37, #b8860b);
+      background: linear-gradient(145deg, var(--chip-color), color-mix(in srgb, var(--chip-color), black 30%));
       border-radius: 8px;
       position: relative;
       box-shadow: inset 0 2px 5px rgba(0,0,0,0.8), 0 4px 8px rgba(0,0,0,0.6);
-      border: 1px solid #f1c40f;
+      border: 1px solid color-mix(in srgb, var(--chip-color), white 20%);
     }
     .chip::before {
       content: "";
       position: absolute;
       width: 80%;
       height: 2px;
-      background: #f1e6b0;
+      background: color-mix(in srgb, var(--chip-color), white 40%);
       left: 10%;
       top: 30%;
-      box-shadow: 0 8px 0 #f1e6b0;
+      box-shadow: 0 8px 0 color-mix(in srgb, var(--chip-color), white 40%);
     }
     .chip::after {
       content: "";
       position: absolute;
       width: 2px;
       height: 70%;
-      background: #f1e6b0;
+      background: color-mix(in srgb, var(--chip-color), white 40%);
       left: 30%;
       top: 15%;
-      box-shadow: 8px 0 0 #f1e6b0;
+      box-shadow: 8px 0 0 color-mix(in srgb, var(--chip-color), white 40%);
     }
 
     .number-wrapper {
@@ -182,6 +200,8 @@
       justify-content: flex-start;
       overflow: visible;
       flex-shrink: 0;
+      pointer-events: none;
+      z-index: 4;
     }
 
     .card-number {
@@ -204,6 +224,7 @@
       outline: 0;
       -webkit-tap-highlight-color: transparent;
       line-height: 1.3;
+      pointer-events: auto;
     }
     .card-number:active {
       background: #3a3a3a !important;
@@ -220,11 +241,39 @@
       margin-bottom: 5px;
       text-align: left;
       flex-shrink: 0;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* پالت رنگ (ثابت و همیشه قابل مشاهده) */
+    .color-palette {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .color-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    .color-btn:hover {
+      transform: scale(1.1);
+      border-color: white;
+    }
+    .color-btn.active {
+      border-color: gold;
+      transform: scale(1.1);
     }
 
     .instruction {
       text-align: center;
-      margin-top: 30px;
+      margin-top: 20px;
       background: rgba(20,20,30,0.7);
       backdrop-filter: blur(8px);
       padding: 12px 24px;
@@ -266,57 +315,146 @@
 <body>
   <div class="scene">
     <div class="card" id="bankCard">
-      <div class="card-front">
+      <div class="card-front" id="cardFront">
+        <div class="glare" id="glareFront"></div>
         <div class="card-header">
           <div class="circles">
             <div class="circle1"></div>
             <div class="circle2"></div>
           </div>
         </div>
-
         <div class="chip-section">
           <div class="chip"></div>
         </div>
-
         <div class="number-wrapper" id="numberWrapper">
           <div class="card-number" id="cardNumber" dir="ltr">
             1234 5678 9012 3456
           </div>
         </div>
-
         <div class="card-holder">M. SENSI</div>
       </div>
-
-      <div class="card-back">
+      <div class="card-back" id="cardBack">
+        <div class="glare" id="glareBack"></div>
         <div class="magnetic-strip"></div>
       </div>
     </div>
   </div>
 
-  <div class="instruction">
-    👆 سنسی گروپ | روی شماره کلیک کنید تا کپی شود
+  <!-- پالت رنگ (بدون دکنه مخفی‌سازی) -->
+  <div class="color-palette">
+    <div class="color-btn active" style="background: #1f1f1f;" data-theme="black" title="مشکی"></div>
+    <div class="color-btn" style="background: #1a3b5c;" data-theme="navy" title="آبی نفتی"></div>
+    <div class="color-btn" style="background: #2d5a27;" data-theme="green" title="سبز تیره"></div>
+    <div class="color-btn" style="background: #5a2d2d;" data-theme="maroon" title="شرابی"></div>
+    <div class="color-btn" style="background: #3a3f44;" data-theme="gunmetal" title="تفنگی"></div>
+    <!-- گزینه gold حذف شد -->
   </div>
 
-  <div class="toast" id="toast">شماره کارت کپی شد</div>
+  <div class="instruction">
+  روی شماره کلیک کنید تا کپی شود
+  </div>
+
+  <div class="toast" id="toast">شماره کارت کپی شد ✅</div>
 
   <div class="footer-note">
-    SENSI GROUP
+  Sensi Group
   </div>
 
   <script>
     (function() {
       const card = document.getElementById('bankCard');
+      const cardFront = document.getElementById('cardFront');
+      const cardBack = document.getElementById('cardBack');
       const cardNumber = document.getElementById('cardNumber');
       const toast = document.getElementById('toast');
       const numberWrapper = document.getElementById('numberWrapper');
+      const glareFront = document.getElementById('glareFront');
+      const glareBack = document.getElementById('glareBack');
 
-      // تنظیم scale شماره برای جا شدن ۱۶ رقم
+      // ========== تعریف تم‌های رنگی ==========
+      const themes = {
+        black: {
+          cardStart: '#1f1f1f',
+          cardEnd: '#0b0b0b',
+          backStart: '#1a1a1a',
+          backEnd: '#0a0a0a',
+          circle1: '#239f40',
+          circle2: '#da121a',
+          chip: '#d4af37'
+        },
+        navy: {
+          cardStart: '#1a3b5c',
+          cardEnd: '#0a1f2e',
+          backStart: '#0f2638',
+          backEnd: '#05121c',
+          circle1: '#3a7ca5',
+          circle2: '#b3442c',
+          chip: '#d4af37'
+        },
+        green: {
+          cardStart: '#2d5a27',
+          cardEnd: '#1a3417',
+          backStart: '#1f3f1b',
+          backEnd: '#10220e',
+          circle1: '#4caf50',
+          circle2: '#8bc34a',
+          chip: '#d4af37'
+        },
+        maroon: {
+          cardStart: '#5a2d2d',
+          cardEnd: '#2e1717',
+          backStart: '#3d1f1f',
+          backEnd: '#1e0f0f',
+          circle1: '#b85c5c',
+          circle2: '#c98b8b',
+          chip: '#d4af37'
+        },
+        gunmetal: {
+          cardStart: '#3a3f44',
+          cardEnd: '#1e2124',
+          backStart: '#2a2e32',
+          backEnd: '#15181b',
+          circle1: '#7e8a8e',
+          circle2: '#b0b7bb',
+          chip: '#d4af37'
+        }
+      };
+
+      // تنظیم تم فعال
+      function setTheme(themeName) {
+        const theme = themes[themeName];
+        if (!theme) return;
+        
+        cardFront.style.setProperty('--card-bg-start', theme.cardStart);
+        cardFront.style.setProperty('--card-bg-end', theme.cardEnd);
+        cardBack.style.setProperty('--card-back-start', theme.backStart);
+        cardBack.style.setProperty('--card-back-end', theme.backEnd);
+        cardFront.style.setProperty('--circle1-color', theme.circle1);
+        cardFront.style.setProperty('--circle2-color', theme.circle2);
+        cardFront.style.setProperty('--chip-color', theme.chip);
+
+        document.querySelectorAll('.color-btn').forEach(btn => {
+          btn.classList.remove('active');
+          if (btn.dataset.theme === themeName) {
+            btn.classList.add('active');
+          }
+        });
+      }
+
+      document.querySelectorAll('.color-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          setTheme(btn.dataset.theme);
+        });
+      });
+
+      setTheme('black');
+
+      // تنظیم scale شماره
       function adjustNumberScale() {
         if (!cardNumber || !numberWrapper) return;
         cardNumber.style.transform = 'none';
         const textWidth = cardNumber.scrollWidth;
         const containerWidth = numberWrapper.clientWidth;
-        
         if (textWidth > containerWidth) {
           const scale = containerWidth / textWidth;
           cardNumber.style.transform = `scale(${scale})`;
@@ -330,76 +468,148 @@
       window.addEventListener('resize', adjustNumberScale);
       setTimeout(adjustNumberScale, 100);
 
-      // ========== چرخش با Pointer Events (روش incremental) ==========
+      // چرخش با اینرسی
+      let currentRotateY = 0;
+      let velocity = 0;
+      let inertiaFrame = null;
       let isDragging = false;
       let lastX = 0;
-      let currentRotateY = 0;
+      let lastTime = 0;
       const SENSITIVITY = 0.8;
+      const INERTIA_DAMPING = 0.95;
+      const MIN_VELOCITY = 0.01;
 
-      card.addEventListener('pointerdown', (e) => {
-        // فقط دکمه اصلی موس یا لمس
+      function updateGlare(angle) {
+        const rad = angle * (Math.PI / 180);
+        const cosAngle = Math.cos(rad);
+        const frontOpacity = 0.4 + 0.4 * cosAngle;
+        const backOpacity = 0.4 - 0.4 * cosAngle;
+        if (glareFront) glareFront.style.opacity = frontOpacity;
+        if (glareBack) glareBack.style.opacity = backOpacity;
+        const posX = 30 + 20 * Math.sin(rad);
+        const posY = 50 + 10 * Math.cos(rad * 2);
+        if (glareFront) {
+          glareFront.style.background = `radial-gradient(circle at ${posX}% ${posY}%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`;
+        }
+        if (glareBack) {
+          glareBack.style.background = `radial-gradient(circle at ${100 - posX}% ${posY}%, rgba(255, 255, 255, 0.2) 0%, transparent 70%)`;
+        }
+      }
+
+      function setRotation(angle) {
+        currentRotateY = angle;
+        card.style.transform = `rotateY(${currentRotateY}deg)`;
+        updateGlare(currentRotateY);
+      }
+
+      function startInertia(initialVelocity) {
+        if (inertiaFrame) cancelAnimationFrame(inertiaFrame);
+        velocity = initialVelocity;
+        function step() {
+          if (Math.abs(velocity) < MIN_VELOCITY || isDragging) {
+            inertiaFrame = null;
+            return;
+          }
+          currentRotateY += velocity;
+          setRotation(currentRotateY);
+          velocity *= INERTIA_DAMPING;
+          inertiaFrame = requestAnimationFrame(step);
+        }
+        inertiaFrame = requestAnimationFrame(step);
+      }
+
+      card.addEventListener('pointerdown', onPointerDown);
+      card.addEventListener('pointermove', onPointerMove);
+      card.addEventListener('pointerup', onPointerUp);
+      card.addEventListener('pointercancel', onPointerUp);
+
+      function onPointerDown(e) {
         if (e.button !== 0 && e.pointerType !== 'touch') return;
-        
+        if (inertiaFrame) {
+          cancelAnimationFrame(inertiaFrame);
+          inertiaFrame = null;
+        }
         isDragging = true;
         lastX = e.clientX;
-        
-        // هیچ transition نباید باشد
+        lastTime = performance.now();
         card.style.transition = 'none';
-        
-        // دریافت انحصاری pointer
         card.setPointerCapture(e.pointerId);
         e.preventDefault();
-      });
+      }
 
-      card.addEventListener('pointermove', (e) => {
+      function onPointerMove(e) {
         if (!isDragging) return;
-        
-        const deltaX = e.clientX - lastX;
-        if (Math.abs(deltaX) > 0) {
+        const currentX = e.clientX;
+        const currentTime = performance.now();
+        const deltaX = currentX - lastX;
+        const deltaTime = currentTime - lastTime;
+        if (Math.abs(deltaX) > 1) {
+          const vel = (deltaX * SENSITIVITY) / deltaTime;
+          velocity = vel * 16;
           currentRotateY += deltaX * SENSITIVITY;
-          card.style.transform = `rotateY(${currentRotateY}deg)`;
-          lastX = e.clientX;
+          setRotation(currentRotateY);
+          lastX = currentX;
+          lastTime = currentTime;
         }
-        
         e.preventDefault();
-      });
+      }
 
-      card.addEventListener('pointerup', (e) => {
+      function onPointerUp(e) {
         if (!isDragging) return;
         isDragging = false;
+        card.style.transition = 'none';
         card.releasePointerCapture(e.pointerId);
+        if (Math.abs(velocity) > MIN_VELOCITY) {
+          startInertia(velocity);
+        }
         e.preventDefault();
-      });
-
-      card.addEventListener('pointercancel', (e) => {
-        isDragging = false;
-        card.releasePointerCapture(e.pointerId);
-        e.preventDefault();
-      });
+      }
 
       card.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      // ========== کپی شماره ==========
-      function showToast() {
+      // کپی شماره
+      function showToast(message) {
+        toast.textContent = message || 'شماره کارت کپی شد';
         toast.classList.add('show');
         setTimeout(() => {
           toast.classList.remove('show');
         }, 1500);
       }
 
-      async function copyToClipboard(text) {
-        try {
-          await navigator.clipboard.writeText(text);
-          showToast();
-        } catch (err) {
-          const textarea = document.createElement('textarea');
-          textarea.value = text;
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
-          showToast();
+      function copyToClipboard(text) {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            showToast('کپی شد');
+          }).catch(err => {
+            console.warn('Clipboard API failed, using fallback', err);
+            fallbackCopy(text);
+          });
+        } else {
+          fallbackCopy(text);
         }
+      }
+
+      function fallbackCopy(text) {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        textarea.style.pointerEvents = 'none';
+        document.body.appendChild(textarea);
+        
+        try {
+          textarea.select();
+          textarea.setSelectionRange(0, 99999);
+          const successful = document.execCommand('copy');
+          if (successful) {
+            showToast('کپی شد');
+          } else {
+          }
+        } catch (err) {
+          console.error('Fallback copy failed', err);
+        }
+        
+        document.body.removeChild(textarea);
       }
 
       function handleCopy(e) {
@@ -418,6 +628,8 @@
 
       const resizeObserver = new ResizeObserver(adjustNumberScale);
       resizeObserver.observe(numberWrapper);
+
+      updateGlare(currentRotateY);
     })();
   </script>
 </body>

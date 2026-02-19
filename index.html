@@ -245,7 +245,7 @@
       z-index: 4;
     }
 
-    /* پالت رنگ (ثابت و همیشه قابل مشاهده) */
+    /* پالت رنگ */
     .color-palette {
       display: flex;
       gap: 10px;
@@ -328,7 +328,7 @@
         </div>
         <div class="number-wrapper" id="numberWrapper">
           <div class="card-number" id="cardNumber" dir="ltr">
-            1234 5678 9012 3456
+            6666 6666 6666 6666
           </div>
         </div>
         <div class="card-holder">M. SENSI</div>
@@ -340,24 +340,23 @@
     </div>
   </div>
 
-  <!-- پالت رنگ (بدون دکنه مخفی‌سازی) -->
+  <!-- پالت رنگ -->
   <div class="color-palette">
     <div class="color-btn active" style="background: #1f1f1f;" data-theme="black" title="مشکی"></div>
     <div class="color-btn" style="background: #1a3b5c;" data-theme="navy" title="آبی نفتی"></div>
     <div class="color-btn" style="background: #2d5a27;" data-theme="green" title="سبز تیره"></div>
     <div class="color-btn" style="background: #5a2d2d;" data-theme="maroon" title="شرابی"></div>
     <div class="color-btn" style="background: #3a3f44;" data-theme="gunmetal" title="تفنگی"></div>
-    <!-- گزینه gold حذف شد -->
   </div>
 
   <div class="instruction">
-  روی شماره کلیک کنید تا کپی شود
+    ATM CARD 3D
   </div>
 
-  <div class="toast" id="toast">شماره کارت کپی شد</div>
+  <div class="toast" id="toast">کپی شد</div>
 
   <div class="footer-note">
-  Sensi Group
+    Sensi Group
   </div>
 
   <script>
@@ -371,60 +370,38 @@
       const glareFront = document.getElementById('glareFront');
       const glareBack = document.getElementById('glareBack');
 
-      // ========== تعریف تم‌های رنگی ==========
+      // تم‌های رنگی
       const themes = {
         black: {
-          cardStart: '#1f1f1f',
-          cardEnd: '#0b0b0b',
-          backStart: '#1a1a1a',
-          backEnd: '#0a0a0a',
-          circle1: '#239f40',
-          circle2: '#da121a',
-          chip: '#d4af37'
+          cardStart: '#1f1f1f', cardEnd: '#0b0b0b',
+          backStart: '#1a1a1a', backEnd: '#0a0a0a',
+          circle1: '#239f40', circle2: '#da121a', chip: '#d4af37'
         },
         navy: {
-          cardStart: '#1a3b5c',
-          cardEnd: '#0a1f2e',
-          backStart: '#0f2638',
-          backEnd: '#05121c',
-          circle1: '#3a7ca5',
-          circle2: '#b3442c',
-          chip: '#d4af37'
+          cardStart: '#1a3b5c', cardEnd: '#0a1f2e',
+          backStart: '#0f2638', backEnd: '#05121c',
+          circle1: '#3a7ca5', circle2: '#b3442c', chip: '#d4af37'
         },
         green: {
-          cardStart: '#2d5a27',
-          cardEnd: '#1a3417',
-          backStart: '#1f3f1b',
-          backEnd: '#10220e',
-          circle1: '#4caf50',
-          circle2: '#8bc34a',
-          chip: '#d4af37'
+          cardStart: '#2d5a27', cardEnd: '#1a3417',
+          backStart: '#1f3f1b', backEnd: '#10220e',
+          circle1: '#4caf50', circle2: '#8bc34a', chip: '#d4af37'
         },
         maroon: {
-          cardStart: '#5a2d2d',
-          cardEnd: '#2e1717',
-          backStart: '#3d1f1f',
-          backEnd: '#1e0f0f',
-          circle1: '#b85c5c',
-          circle2: '#c98b8b',
-          chip: '#d4af37'
+          cardStart: '#5a2d2d', cardEnd: '#2e1717',
+          backStart: '#3d1f1f', backEnd: '#1e0f0f',
+          circle1: '#b85c5c', circle2: '#c98b8b', chip: '#d4af37'
         },
         gunmetal: {
-          cardStart: '#3a3f44',
-          cardEnd: '#1e2124',
-          backStart: '#2a2e32',
-          backEnd: '#15181b',
-          circle1: '#7e8a8e',
-          circle2: '#b0b7bb',
-          chip: '#d4af37'
+          cardStart: '#3a3f44', cardEnd: '#1e2124',
+          backStart: '#2a2e32', backEnd: '#15181b',
+          circle1: '#7e8a8e', circle2: '#b0b7bb', chip: '#d4af37'
         }
       };
 
-      // تنظیم تم فعال
       function setTheme(themeName) {
         const theme = themes[themeName];
         if (!theme) return;
-        
         cardFront.style.setProperty('--card-bg-start', theme.cardStart);
         cardFront.style.setProperty('--card-bg-end', theme.cardEnd);
         cardBack.style.setProperty('--card-back-start', theme.backStart);
@@ -432,21 +409,15 @@
         cardFront.style.setProperty('--circle1-color', theme.circle1);
         cardFront.style.setProperty('--circle2-color', theme.circle2);
         cardFront.style.setProperty('--chip-color', theme.chip);
-
         document.querySelectorAll('.color-btn').forEach(btn => {
           btn.classList.remove('active');
-          if (btn.dataset.theme === themeName) {
-            btn.classList.add('active');
-          }
+          if (btn.dataset.theme === themeName) btn.classList.add('active');
         });
       }
 
       document.querySelectorAll('.color-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          setTheme(btn.dataset.theme);
-        });
+        btn.addEventListener('click', () => setTheme(btn.dataset.theme));
       });
-
       setTheme('black');
 
       // تنظیم scale شماره
@@ -463,24 +434,17 @@
           cardNumber.style.transform = 'scale(1)';
         }
       }
-
       window.addEventListener('load', adjustNumberScale);
       window.addEventListener('resize', adjustNumberScale);
       setTimeout(adjustNumberScale, 100);
 
       // چرخش با اینرسی
-      let currentRotateY = 0;
-      let velocity = 0;
-      let inertiaFrame = null;
-      let isDragging = false;
-      let lastX = 0;
-      let lastTime = 0;
-      const SENSITIVITY = 0.8;
-      const INERTIA_DAMPING = 0.95;
-      const MIN_VELOCITY = 0.01;
+      let currentRotateY = 0, velocity = 0, inertiaFrame = null, isDragging = false;
+      let lastX = 0, lastTime = 0;
+      const SENSITIVITY = 0.8, INERTIA_DAMPING = 0.95, MIN_VELOCITY = 0.01;
 
       function updateGlare(angle) {
-        const rad = angle * (Math.PI / 180);
+        const rad = angle * Math.PI / 180;
         const cosAngle = Math.cos(rad);
         const frontOpacity = 0.4 + 0.4 * cosAngle;
         const backOpacity = 0.4 - 0.4 * cosAngle;
@@ -488,12 +452,8 @@
         if (glareBack) glareBack.style.opacity = backOpacity;
         const posX = 30 + 20 * Math.sin(rad);
         const posY = 50 + 10 * Math.cos(rad * 2);
-        if (glareFront) {
-          glareFront.style.background = `radial-gradient(circle at ${posX}% ${posY}%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`;
-        }
-        if (glareBack) {
-          glareBack.style.background = `radial-gradient(circle at ${100 - posX}% ${posY}%, rgba(255, 255, 255, 0.2) 0%, transparent 70%)`;
-        }
+        if (glareFront) glareFront.style.background = `radial-gradient(circle at ${posX}% ${posY}%, rgba(255, 255, 255, 0.3) 0%, transparent 70%)`;
+        if (glareBack) glareBack.style.background = `radial-gradient(circle at ${100 - posX}% ${posY}%, rgba(255, 255, 255, 0.2) 0%, transparent 70%)`;
       }
 
       function setRotation(angle) {
@@ -518,26 +478,18 @@
         inertiaFrame = requestAnimationFrame(step);
       }
 
-      card.addEventListener('pointerdown', onPointerDown);
-      card.addEventListener('pointermove', onPointerMove);
-      card.addEventListener('pointerup', onPointerUp);
-      card.addEventListener('pointercancel', onPointerUp);
-
-      function onPointerDown(e) {
+      card.addEventListener('pointerdown', (e) => {
         if (e.button !== 0 && e.pointerType !== 'touch') return;
-        if (inertiaFrame) {
-          cancelAnimationFrame(inertiaFrame);
-          inertiaFrame = null;
-        }
+        if (inertiaFrame) { cancelAnimationFrame(inertiaFrame); inertiaFrame = null; }
         isDragging = true;
         lastX = e.clientX;
         lastTime = performance.now();
         card.style.transition = 'none';
         card.setPointerCapture(e.pointerId);
         e.preventDefault();
-      }
+      });
 
-      function onPointerMove(e) {
+      card.addEventListener('pointermove', (e) => {
         if (!isDragging) return;
         const currentX = e.clientX;
         const currentTime = performance.now();
@@ -552,38 +504,36 @@
           lastTime = currentTime;
         }
         e.preventDefault();
-      }
+      });
 
-      function onPointerUp(e) {
+      card.addEventListener('pointerup', (e) => {
         if (!isDragging) return;
         isDragging = false;
         card.style.transition = 'none';
         card.releasePointerCapture(e.pointerId);
-        if (Math.abs(velocity) > MIN_VELOCITY) {
-          startInertia(velocity);
-        }
+        if (Math.abs(velocity) > MIN_VELOCITY) startInertia(velocity);
         e.preventDefault();
-      }
+      });
+
+      card.addEventListener('pointercancel', (e) => {
+        isDragging = false;
+        card.releasePointerCapture(e.pointerId);
+        e.preventDefault();
+      });
 
       card.addEventListener('contextmenu', (e) => e.preventDefault());
 
-      // کپی شماره
-      function showToast(message) {
-        toast.textContent = message || 'شماره کارت کپی شد';
+      // ========== کپی شماره ==========
+      function showToast() {
         toast.classList.add('show');
-        setTimeout(() => {
-          toast.classList.remove('show');
-        }, 1500);
+        setTimeout(() => toast.classList.remove('show'), 1500);
       }
 
       function copyToClipboard(text) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(() => {
-            showToast('کپی شد');
-          }).catch(err => {
-            console.warn('Clipboard API failed, using fallback', err);
-            fallbackCopy(text);
-          });
+          navigator.clipboard.writeText(text)
+            .then(showToast)
+            .catch(() => fallbackCopy(text));
         } else {
           fallbackCopy(text);
         }
@@ -596,34 +546,28 @@
         textarea.style.opacity = '0';
         textarea.style.pointerEvents = 'none';
         document.body.appendChild(textarea);
-        
         try {
           textarea.select();
           textarea.setSelectionRange(0, 99999);
-          const successful = document.execCommand('copy');
-          if (successful) {
-            showToast('کپی شد');
-          } else {
-          }
+          document.execCommand('copy');
+          showToast();
         } catch (err) {
-          console.error('Fallback copy failed', err);
+          console.error('Copy failed', err);
+          showToast();
         }
-        
         document.body.removeChild(textarea);
       }
 
-      function handleCopy(e) {
+      cardNumber.addEventListener('click', (e) => {
         e.stopPropagation();
         e.preventDefault();
-        const numberText = cardNumber.innerText.trim();
-        copyToClipboard(numberText);
-      }
+        copyToClipboard(cardNumber.innerText.trim());
+      });
 
-      cardNumber.addEventListener('click', handleCopy);
       cardNumber.addEventListener('touchstart', (e) => {
         e.stopPropagation();
         e.preventDefault();
-        handleCopy(e);
+        copyToClipboard(cardNumber.innerText.trim());
       }, { passive: false });
 
       const resizeObserver = new ResizeObserver(adjustNumberScale);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Atm card 3D</title>
+  <title>Atm-Card 3D</title>
   <style>
     * {
       margin: 0;
@@ -51,6 +51,23 @@
 
     .card:active {
       cursor: grabbing;
+    }
+
+    /* انیمیشن جذب توجه با تایم بیشتر */
+    @keyframes cardAttract {
+      0% { transform: rotateY(0deg); }
+      15% { transform: rotateY(-7deg); }
+      30% { transform: rotateY(7deg); }
+      45% { transform: rotateY(-5deg); }
+      60% { transform: rotateY(5deg); }
+      75% { transform: rotateY(-3deg); }
+      90% { transform: rotateY(3deg); }
+      100% { transform: rotateY(0deg); }
+    }
+
+    .card-attract {
+      animation: cardAttract 2.8s ease-out forwards; /* تایم بیشتر: ۲.۸ ثانیه */
+      transition: none;
     }
 
     .card-front, .card-back {
@@ -204,13 +221,12 @@
       z-index: 4;
     }
 
-    /* ===== رفع مشکل underline در سافاری ===== */
     .card-number {
       font-family: 'Courier New', monospace;
       font-size: 2.2rem;
       font-weight: 700 !important;
       color: #ffffff !important;
-      -webkit-text-fill-color: #ffffff !important; /* برای سافاری */
+      -webkit-text-fill-color: #ffffff !important;
       text-shadow: 0 2px 4px black;
       letter-spacing: 4px;
       white-space: nowrap;
@@ -222,17 +238,12 @@
       border: 1px solid rgba(255,255,255,0.15);
       cursor: pointer;
       transition: background 0.2s;
-      
-      /* مهم: حذف خط زیر */
       text-decoration: none !important;
       -webkit-text-decoration: none !important;
       text-decoration-line: none !important;
       -webkit-text-decoration-line: none !important;
-      
-      /* جلوگیری از استایل پیش‌فرض لینک */
       border-bottom: none !important;
       -webkit-border-bottom: none !important;
-      
       outline: 0;
       -webkit-tap-highlight-color: transparent;
       line-height: 1.3;
@@ -257,7 +268,6 @@
       z-index: 4;
     }
 
-    /* پالت رنگ */
     .color-palette {
       display: flex;
       gap: 10px;
@@ -352,7 +362,6 @@
     </div>
   </div>
 
-  <!-- پالت رنگ -->
   <div class="color-palette">
     <div class="color-btn active" style="background: #1f1f1f;" data-theme="black" title="مشکی"></div>
     <div class="color-btn" style="background: #1a3b5c;" data-theme="navy" title="آبی نفتی"></div>
@@ -362,7 +371,7 @@
   </div>
 
   <div class="instruction">
-    Atm Card 3D
+    ATM CARD 3D
   </div>
 
   <div class="toast" id="toast">✅کپی شد</div>
@@ -497,6 +506,7 @@
         lastX = e.clientX;
         lastTime = performance.now();
         card.style.transition = 'none';
+        card.classList.remove('card-attract'); // قطع انیمیشن جذاب در صورت شروع حرکت
         card.setPointerCapture(e.pointerId);
         e.preventDefault();
       });
@@ -586,6 +596,15 @@
       resizeObserver.observe(numberWrapper);
 
       updateGlare(currentRotateY);
+
+      // ========== اضافه کردن انیمیشن جذاب اولیه با تایم بیشتر ==========
+      setTimeout(() => {
+        card.classList.add('card-attract');
+        // بعد از پایان انیمیشن کلاس را حذف کن تا transition برگردد (مدت انیمیشن ۲.۸ ثانیه)
+        setTimeout(() => {
+          card.classList.remove('card-attract');
+        }, 2800); // هماهنگ با animation-duration
+      }, 400); // کمی تأخیر برای لود کامل
     })();
   </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Atm Card</title>
+  <title>Atm card 3D</title>
   <style>
     * {
       margin: 0;
@@ -204,11 +204,13 @@
       z-index: 4;
     }
 
+    /* ===== رفع مشکل underline در سافاری ===== */
     .card-number {
       font-family: 'Courier New', monospace;
       font-size: 2.2rem;
-      font-weight: 700;
-      color: #ffffff;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      -webkit-text-fill-color: #ffffff !important; /* برای سافاری */
       text-shadow: 0 2px 4px black;
       letter-spacing: 4px;
       white-space: nowrap;
@@ -220,7 +222,17 @@
       border: 1px solid rgba(255,255,255,0.15);
       cursor: pointer;
       transition: background 0.2s;
-      text-decoration: none;
+      
+      /* مهم: حذف خط زیر */
+      text-decoration: none !important;
+      -webkit-text-decoration: none !important;
+      text-decoration-line: none !important;
+      -webkit-text-decoration-line: none !important;
+      
+      /* جلوگیری از استایل پیش‌فرض لینک */
+      border-bottom: none !important;
+      -webkit-border-bottom: none !important;
+      
       outline: 0;
       -webkit-tap-highlight-color: transparent;
       line-height: 1.3;
@@ -331,7 +343,7 @@
             6666 6666 6666 6666
           </div>
         </div>
-        <div class="card-holder">MR. SENSI</div>
+        <div class="card-holder">M. SENSI</div>
       </div>
       <div class="card-back" id="cardBack">
         <div class="glare" id="glareBack"></div>
@@ -350,13 +362,13 @@
   </div>
 
   <div class="instruction">
-    ATM CARD 3D
+    Atm Card 3D
   </div>
 
-  <div class="toast" id="toast">کپی شد</div>
+  <div class="toast" id="toast">✅کپی شد</div>
 
   <div class="footer-note">
-    Sensi Group
+    SensiGroup
   </div>
 
   <script>
